@@ -13,7 +13,9 @@ if [ "$TRAVIS_OS_NAME" = "linux" ]; then
     make -j8 VERBOSE=1
     make test VERBOSE=1
     git clean -xfd
-    source /opt/qt54/bin/qt54-env.sh
+    set +e
+    . /opt/qt54/bin/qt54-env.sh
+    set -e
     cmake . -DBUILD_TESTING=on -DUSE_QT5=ON
     make -j8 VERBOSE=1
     make test VERBOSE=1
