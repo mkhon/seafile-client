@@ -559,7 +559,7 @@ TARGET_LINK_LIBRARIES(seafile-applet
 )
 
 IF(USE_QT5)
-  QT5_USE_MODULES(seafile-applet ${USE_QT_LIBRARIES})
+  QT5_USE_MODULES(seafile-applet Core Gui Widgets Network WebKit WebKitWidgets)
 ENDIF(USE_QT5)
 
 ## QtBus
