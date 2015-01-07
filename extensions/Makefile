@@ -2,7 +2,8 @@ BUILDDIR=build
 TARGET = $(BUILDDIR)/seafile_shell_ext.dll
 DLL_PATH = $(shell pwd -W | sed -e 's|/|\\\\\\\\|g')\\\\$(TARGET)
 
-MODULES = ext.cpp shell-ext.cpp class-factory.cpp context-menu.cpp log.cpp
+MODULES = dll.cpp shell-ext.cpp class-factory.cpp context-menu.cpp log.cpp \
+	applet-connection.cpp
 
 ifeq (${MAKECMDGOALS}, x64)
 # 64 bit, for server 2003 or above. We need to set _WIN32_WINNT for KEY_WOW64_64KEY.

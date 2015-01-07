@@ -16,10 +16,6 @@ HINSTANCE           g_hResInst = NULL;
 extern "C" int APIENTRY
 DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID /* lpReserved */)
 {
-    // NOTE: Do *NOT* call apr_initialize() or apr_terminate() here in DllMain(),
-    // because those functions call LoadLibrary() indirectly through malloc().
-    // And LoadLibrary() inside DllMain() is not allowed and can lead to unexpected
-    // behavior and even may create dependency loops in the dll load order.
     Logger::debug("DllMain called");
     if (dwReason == DLL_PROCESS_ATTACH)
     {
@@ -59,12 +55,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID *ppvOut)
     *ppvOut = NULL;
 
     if (IsEqualIID(rclsid, CLSID_SEAFILE_SHELLEXT)) {
-        // apr_initialize();
-        // svn_dso_initialize2();
-        // g_SVNAdminDir.Init();
-        // g_cAprInit++;
-
-        CShellExtClassFactory *pcf = new CShellExtClassFactory;
+        ShellExtClassFactory *pcf = new ShellExtClassFactory;
         const HRESULT hr = pcf->QueryInterface(riid, ppvOut);
         if(FAILED(hr))
             delete pcf;

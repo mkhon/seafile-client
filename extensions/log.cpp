@@ -19,10 +19,6 @@ Logger* Logger::instance()
 Logger::Logger()
 {
     ofs_.open("C:/Users/lin-vm/seaf_ext.log");
-
-    UINT mtype = MB_OK | MB_ICONWARNING;
-
-    MessageBox(NULL, "hello world", "Seafile", mtype);
 }
 
 Logger::~Logger()
