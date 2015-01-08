@@ -82,7 +82,10 @@ SeafileTrayIcon::SeafileTrayIcon(QObject *parent)
     connect(refresh_timer_, SIGNAL(timeout()), this, SLOT(refreshTrayIconToolTip()));
 
     createActions();
+    createGlobalActions();
     createContextMenu();
+    createGlobalMenu();
+    createGlobalMenuBar();
 
     connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(onActivated(QSystemTrayIcon::ActivationReason)));
@@ -91,8 +94,6 @@ SeafileTrayIcon::SeafileTrayIcon(QObject *parent)
             this, SLOT(onSeahubNotificationsChanged()));
 
     hide();
-
-    createGlobalMenuBar();
 #if defined(Q_WS_MAC)
     tnm = new TrayNotificationManager(this);
 #endif
@@ -149,6 +150,31 @@ void SeafileTrayIcon::createActions()
     connect(open_help_action_, SIGNAL(triggered()), this, SLOT(openHelp()));
 }
 
+void SeafileTrayIcon::createGlobalActions()
+{
+#ifdef Q_WS_MAC
+    global_disable_auto_sync_action_ = new QAction(tr("Disable auto sync"), this);
+    connect(global_disable_auto_sync_action_, SIGNAL(triggered()), this, SLOT(disableAutoSync()));
+
+    global_enable_auto_sync_action_ = new QAction(tr("Enable auto sync"), this);
+    connect(global_enable_auto_sync_action_, SIGNAL(triggered()), this, SLOT(enableAutoSync()));
+
+    global_view_unread_seahub_notifications_action_ = new QAction(tr("View unread notifications"), this);
+    connect(global_view_unread_seahub_notifications_action_, SIGNAL(triggered()),
+            this, SLOT(viewUnreadNotifications()));
+
+    global_toggle_main_window_action_ = new QAction(tr("Show main window"), this);
+    connect(global_toggle_main_window_action_, SIGNAL(triggered()), this, SLOT(toggleMainWindow()));
+
+    global_settings_action_ = new QAction(tr("Settings"), this);
+    connect(global_settings_action_, SIGNAL(triggered()), this, SLOT(showSettingsWindow()));
+
+    global_open_log_directory_action_ = new QAction(tr("Open &logs folder"), this);
+    global_open_log_directory_action_->setStatusTip(tr("open seafile log directory"));
+    connect(global_open_log_directory_action_, SIGNAL(triggered()), this, SLOT(openLogDirectory()));
+#endif
+}
+
 void SeafileTrayIcon::createContextMenu()
 {
     help_menu_ = new QMenu(tr("Help"), NULL);
@@ -172,6 +198,20 @@ void SeafileTrayIcon::createContextMenu()
 
     setContextMenu(context_menu_);
     connect(context_menu_, SIGNAL(aboutToShow()), this, SLOT(prepareContextMenu()));
+}
+void SeafileTrayIcon::createGlobalMenu()
+{
+#ifdef Q_WS_MAC
+    // create qmenu used in menubar and docker menu
+    global_menu_ = new QMenu(tr("File"));
+    global_menu_->addAction(global_view_unread_seahub_notifications_action_);
+    global_menu_->addAction(global_toggle_main_window_action_);
+    global_menu_->addAction(global_settings_action_);
+    global_menu_->addAction(global_open_log_directory_action_);
+    global_menu_->addSeparator();
+    global_menu_->addAction(global_enable_auto_sync_action_);
+    global_menu_->addAction(global_disable_auto_sync_action_);
+#endif
 }
 
 void SeafileTrayIcon::prepareContextMenu()
@@ -197,17 +237,6 @@ void SeafileTrayIcon::createGlobalMenuBar()
 {
     // support it only on mac os x currently
 #ifdef Q_WS_MAC
-    // create qmenu used in menubar and docker menu
-    global_menu_ = new QMenu(tr("File"));
-    global_menu_->addAction(view_unread_seahub_notifications_action_);
-    global_menu_->addAction(toggle_main_window_action_);
-    global_menu_->addAction(settings_action_);
-    global_menu_->addAction(open_log_directory_action_);
-    global_menu_->addSeparator();
-    global_menu_->addAction(enable_auto_sync_action_);
-    global_menu_->addAction(disable_auto_sync_action_);
-    connect(global_menu_, SIGNAL(aboutToShow()), this, SLOT(prepareContextMenu()));
-
     global_menubar_ = new QMenuBar(0);
     global_menubar_->setNativeMenuBar(true);
     global_menubar_->addMenu(global_menu_);

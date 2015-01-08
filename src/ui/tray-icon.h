@@ -60,7 +60,9 @@ private:
     Q_DISABLE_COPY(SeafileTrayIcon)
 
     void createActions();
+    void createGlobalActions();
     void createContextMenu();
+    void createGlobalMenu();
     void createGlobalMenuBar();
 
     QIcon stateToIcon(TrayState state);
@@ -68,8 +70,6 @@ private:
 
     QMenu *context_menu_;
     QMenu *help_menu_;
-    QMenu *global_menu_;
-    QMenuBar *global_menubar_;
 
     // Actions for tray icon menu
     QAction *enable_auto_sync_action_;
@@ -79,6 +79,19 @@ private:
     QAction *settings_action_;
     QAction *open_log_directory_action_;
     QAction *view_unread_seahub_notifications_action_;
+
+#if defined(Q_WS_MAC)
+    QMenu *global_menu_;
+    QMenuBar *global_menubar_;
+
+    // Actions for global tray icon menu
+    QAction *global_enable_auto_sync_action_;
+    QAction *global_disable_auto_sync_action_;
+    QAction *global_toggle_main_window_action_;
+    QAction *global_settings_action_;
+    QAction *global_open_log_directory_action_;
+    QAction *global_view_unread_seahub_notifications_action_;
+#endif
 
     QAction *about_action_;
     QAction *open_help_action_;
